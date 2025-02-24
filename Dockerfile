@@ -4,7 +4,12 @@ FROM python:3.9-slim
 WORKDIR /app
 
 #install ffmpeg
-RUN apt-get update && apt-get install -y ffmpeg
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends debian-archive-keyring && \
+    apt-get update && \
+    apt-get install -y ffmpeg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements file
 COPY requirements.txt .
