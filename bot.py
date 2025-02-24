@@ -26,8 +26,8 @@ BOT_TOKEN = os.getenv("TOKEN")
 
 # Rutas de movimiento de cámara (presets)
 ROUTES = {
-    "getSalseo": [0, 1, 0],
-    "getNevera": [0, 2, 0],
+    "getsalseo": [0, 1, 0],
+    "getnevera": [0, 2, 0],
     # Añadir más rutas aquí
 }
 
@@ -122,7 +122,7 @@ async def send_video(chat_id, output_file, context, delete_after=MESSAGE_LIFETIM
 
 async def start_route(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Inicia la ejecución de una ruta de cámara basada en el comando recibido."""
-    command = update.message.text.split()[0].split('@')[0].replace("/", "").strip()
+    command = update.message.text.split('@')[0].replace("/", "")
     if command in ROUTES:
         route = ROUTES[command]
         output_file = f"{command}.mp4"
