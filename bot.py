@@ -33,10 +33,10 @@ ROUTES = {
 
 # Lista de comandos disponibles y sus descripciones
 COMMANDS_DESCRIPTIONS = {
-    "getSalseo": "Video del club en general.",
-    "getNevera": "Video que apunta a la nevera.",
-    "getImage": "Imagen del punto que esté mirando la cámara.",
-    "getVideo": "Video del punto que esté mirando la cámara.",
+    "getsalseo": "Video del club en general.",
+    "getnevera": "Video que apunta a la nevera.",
+    "getimage": "Imagen del punto que esté mirando la cámara.",
+    "getvideo": "Video del punto que esté mirando la cámara.",
 }
 
 MESSAGE_LIFETIME = 30  # Tiempo en segundos para eliminar mensajes
@@ -122,7 +122,7 @@ async def send_video(chat_id, output_file, context, delete_after=MESSAGE_LIFETIM
 
 async def start_route(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Inicia la ejecución de una ruta de cámara basada en el comando recibido."""
-    command = update.message.text.replace("/", "")
+    command = update.message.text.split('@')[0].replace("/", "")
     if command in ROUTES:
         route = ROUTES[command]
         output_file = f"{command}.mp4"
@@ -215,10 +215,10 @@ def main():
     allowed_filter = filters.Chat(chat_id=ALLOWED_CHAT_IDS)
     disallowed_filter = ~allowed_filter
 
-    application.add_handler(CommandHandler("getSalseo", start_route, filters=allowed_filter))
-    application.add_handler(CommandHandler("getNevera", start_route, filters=allowed_filter))
-    application.add_handler(CommandHandler("getImage", get_image, filters=allowed_filter))
-    application.add_handler(CommandHandler("getVideo", get_video, filters=allowed_filter))
+    application.add_handler(CommandHandler("getsalseo", start_route, filters=allowed_filter))
+    application.add_handler(CommandHandler("getnevera", start_route, filters=allowed_filter))
+    application.add_handler(CommandHandler("getimage", get_image, filters=allowed_filter))
+    application.add_handler(CommandHandler("getvideo", get_video, filters=allowed_filter))
 
     application.add_handler(MessageHandler(filters.COMMAND & disallowed_filter, not_allowed_reply))
     application.add_handler(MessageHandler(filters.COMMAND & allowed_filter, unknown_command))
