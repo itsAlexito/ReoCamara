@@ -14,10 +14,9 @@ async def start_route(update: Update, context: ContextTypes.DEFAULT_TYPE):
         route = ROUTES[command]
         output_file = f"{command}.mp4"
         await execute_route(route, output_file)
-        await send_video(update.effective_chat.id, output_file, context, delete_after=MESSAGE_LIFETIME)
+        await send_video(update.effective_chat.id, output_file, context)
     else:
         await unknown_command(update, context)
-
 
 # Respuesta para comandos no reconocidos
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -47,8 +46,7 @@ async def get_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Error al obtener la imagen de la cámara.")
         return
 
-    await send_image(update.effective_chat.id, image_file, context, delete_after=MESSAGE_LIFETIME)
-
+    await send_image(update.effective_chat.id, image_file, context)
 
 # Obtiene un video de la cámara y lo envía
 async def get_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -60,7 +58,7 @@ async def get_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not os.path.exists(output_file) or os.path.getsize(output_file) == 0:
             await update.message.reply_text("No se pudo grabar el video.")
             return
-        await send_video(update.effective_chat.id, output_file, context, delete_after=MESSAGE_LIFETIME)
+        await send_video(update.effective_chat.id, output_file, context)
     except Exception:
         await update.message.reply_text("Ocurrió un error al grabar el video.")
 
