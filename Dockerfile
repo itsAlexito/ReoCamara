@@ -24,4 +24,4 @@ COPY . .
 ENV TOKEN=<your_bot_token_here>
 
 # Command to run the bot
-CMD ["python", "bot.py"]
+CMD ["python", "main.py"]
