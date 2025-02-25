@@ -9,7 +9,7 @@ def main():
 
     # Agregar handlers para comandos permitidos
     application.add_handler(CommandHandler("getsalseo", start_route, filters=allowed_filter))
-    application.add_handler(CommandHandler("getvevera", start_route, filters=allowed_filter))
+    application.add_handler(CommandHandler("getnevera", start_route, filters=allowed_filter))
     application.add_handler(CommandHandler("getimage", get_image, filters=allowed_filter))
     application.add_handler(CommandHandler("getvideo", get_video, filters=allowed_filter))
 
