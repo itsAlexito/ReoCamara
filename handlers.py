@@ -14,9 +14,10 @@ async def start_route(update: Update, context: ContextTypes.DEFAULT_TYPE):
         route = ROUTES[command]
         output_file = f"{command}.mp4"
         await execute_route(route, output_file)
-        await send_video(update.effective_chat.id, output_file, context)
+        await send_video(update.effective_chat.id, output_file, context, reply_to_message_id=update.message.message_id)
     else:
         await unknown_command(update, context)
+
 
 # Respuesta para comandos no reconocidos
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -46,7 +47,9 @@ async def get_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Error al obtener la imagen de la cámara.")
         return
 
-    await send_image(update.effective_chat.id, image_file, context)
+    # Se pasa el message_id original para que la respuesta sea en modo reply
+    await send_image(update.effective_chat.id, image_file, context, reply_to_message_id=update.message.message_id)
+
 
 # Obtiene un video de la cámara y lo envía
 async def get_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -58,9 +61,10 @@ async def get_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not os.path.exists(output_file) or os.path.getsize(output_file) == 0:
             await update.message.reply_text("No se pudo grabar el video.")
             return
-        await send_video(update.effective_chat.id, output_file, context)
+        await send_video(update.effective_chat.id, output_file, context, reply_to_message_id=update.message.message_id)
     except Exception:
         await update.message.reply_text("Ocurrió un error al grabar el video.")
+
 
 # Respuesta para chats que no están permitidos
 async def not_allowed_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):

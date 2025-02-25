@@ -8,10 +8,10 @@ def main():
     disallowed_filter = ~allowed_filter
 
     # Agregar handlers para comandos permitidos
-    application.add_handler(CommandHandler("getSalseo", start_route, filters=allowed_filter))
-    application.add_handler(CommandHandler("getNevera", start_route, filters=allowed_filter))
-    application.add_handler(CommandHandler("getImage", get_image, filters=allowed_filter))
-    application.add_handler(CommandHandler("getVideo", get_video, filters=allowed_filter))
+    application.add_handler(CommandHandler("getsalseo", start_route, filters=allowed_filter))
+    application.add_handler(CommandHandler("getvevera", start_route, filters=allowed_filter))
+    application.add_handler(CommandHandler("getimage", get_image, filters=allowed_filter))
+    application.add_handler(CommandHandler("getvideo", get_video, filters=allowed_filter))
 
     # Manejar comandos de chats no permitidos
     application.add_handler(MessageHandler(filters.COMMAND & disallowed_filter, not_allowed_reply))

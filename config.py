@@ -18,17 +18,17 @@ BOT_TOKEN = os.getenv("TOKEN")
 
 # Rutas de movimiento de cámara (presets)
 ROUTES = {
-    "getSalseo": [0, 1, 0],
-    "getNevera": [0, 2, 0],
+    "getsalseo": [0, 1, 0],
+    "getnevera": [0, 2, 0],
     # Puedes agregar más rutas aquí
 }
 
 # Comandos disponibles y sus descripciones
 COMMANDS_DESCRIPTIONS = {
-    "getSalseo": "Video del club en general.",
-    "getNevera": "Video que apunta a la nevera.",
-    "getImage": "Imagen del punto que esté mirando la cámara.",
-    "getVideo": "Video del punto que esté mirando la cámara.",
+    "getsalseo": "Video del club en general.",
+    "getnevera": "Video que apunta a la nevera.",
+    "getimage": "Imagen del punto que esté mirando la cámara.",
+    "getvideo": "Video del punto que esté mirando la cámara.",
 }
 
 # Tiempo de vida de los mensajes (segundos)
