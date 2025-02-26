@@ -1,6 +1,6 @@
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from config import BOT_TOKEN, ALLOWED_CHAT_IDS
-from handlers import start_route, unknown_command, get_image, get_video, not_allowed_reply
+from handlers import start_route, unknown_command, get_image, get_video, not_allowed_reply, forward_message
 
 def main():
     application = Application.builder().token(BOT_TOKEN).build()
@@ -12,6 +12,7 @@ def main():
     application.add_handler(CommandHandler("getnevera", start_route, filters=allowed_filter))
     application.add_handler(CommandHandler("getimage", get_image, filters=allowed_filter))
     application.add_handler(CommandHandler("getvideo", get_video, filters=allowed_filter))
+    application.add_handler(CommandHandler("forward", forward_message, filters=allowed_filter.ChatType.is_private))
 
     # Manejar comandos de chats no permitidos
     application.add_handler(MessageHandler(filters.COMMAND & disallowed_filter, not_allowed_reply))
