@@ -3,9 +3,11 @@ import asyncio
 import requests
 from telegram import Update
 from telegram.ext import ContextTypes
-from config import CAMERA_IP, ROUTES, COMMANDS_DESCRIPTIONS, MESSAGE_LIFETIME
+from config import CAMERA_IP, ROUTES, COMMANDS_DESCRIPTIONS, GODMODE, TARGET_CHAT_ID
 from camera import get_token, record_video, execute_route
 from delete import send_video, send_image
+
+
 
 # Inicia la ejecución de una ruta de cámara según el comando recibido
 async def start_route(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -71,3 +73,25 @@ async def not_allowed_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "No sé quién chuchas eres, si tienes algún problema contacta con el equipo de IT de eurielec."
     )
+
+# Reenvía un mensaje a un grupo específico
+async def forward_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.message.from_user.id
+
+    # Verificar si el usuario está autorizado
+    if user_id not in GODMODE:
+        await not_allowed_reply(update, context)  # Usamos la función ya existente
+        return
+    
+    # Obtener el mensaje a enviar
+    text_to_send = " ".join(context.args)
+    if not text_to_send:
+        await update.message.reply_text("Debes escribir un mensaje para enviarlo.")
+        return
+
+    try:
+        # Enviar el mensaje al grupo de destino
+        await context.bot.send_message(chat_id=TARGET_CHAT_ID, text=text_to_send)
+        await update.message.reply_text("Mensaje enviado al grupo.")
+    except Exception as e:
+        await update.message.reply_text(f"Error al enviar el mensaje: {e}")

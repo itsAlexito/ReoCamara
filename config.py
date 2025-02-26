@@ -11,10 +11,15 @@ USER = os.getenv("USERBOT")
 PASSWORD = os.getenv("PASSWORD")
 PORT = os.getenv("PORT")
 RTSP_URL = f"rtsp://{USER}:{PASSWORD}@{CAMERA_IP}:{PORT}/h264Preview_01_main"
-
-# Chat permitidos y token del bot
-ALLOWED_CHAT_IDS = [int(chat_id) for chat_id in os.getenv("ALLOWED_CHATS").split(",")]
 BOT_TOKEN = os.getenv("TOKEN")
+
+# Chat permitidos
+ALLOWED_CHAT_IDS = [int(chat_id) for chat_id in os.getenv("ALLOWED_CHATS").split(",")]
+TARGET_CHAT_ID = int(os.getenv("TARGET_CHAT_ID"))  # Grupo donde se enviarán los mensajes
+
+# Usuarios autorizados para ciertas acciones
+GODMODE = [int(user_id) for user_id in os.getenv("GODMODE").split(",")]
+
 
 # Rutas de movimiento de cámara (presets)
 ROUTES = {
