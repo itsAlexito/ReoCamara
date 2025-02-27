@@ -22,15 +22,17 @@ async def send_video(chat_id, output_file, context: ContextTypes.DEFAULT_TYPE, r
         await context.bot.send_message(chat_id=chat_id, text="No se pudo grabar el video.")
 
 # Envía una imagen y la elimina después de un tiempo
-async def send_image(chat_id, image_file, context: ContextTypes.DEFAULT_TYPE, reply_to_message_id: int = None):
+async def send_image(chat_id, image_file, context: ContextTypes.DEFAULT_TYPE, reply_to_message_id: int = None,delete_after=True):
     if os.path.exists(image_file) and os.path.getsize(image_file) > 0:
-        info_message = await context.bot.send_message(
+        if delete_after:
+            info_message = await context.bot.send_message(
             chat_id=chat_id, 
             text=f"Esta imagen se autodestruirá en {MESSAGE_LIFETIME} segundos."
         )
         with open(image_file, 'rb') as image:
             image_message = await context.bot.send_photo(chat_id=chat_id, photo=image)
-        await asyncio.sleep(MESSAGE_LIFETIME)
+        if delete_after:
+            await asyncio.sleep(MESSAGE_LIFETIME)
         try:
             await context.bot.delete_message(chat_id=chat_id, message_id=image_message.message_id)
             await context.bot.delete_message(chat_id=chat_id, message_id=info_message.message_id)

@@ -50,7 +50,7 @@ async def get_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # Se pasa el message_id original para que la respuesta sea en modo reply
-    await send_image(update.effective_chat.id, image_file, context, reply_to_message_id=update.message.message_id)
+    await send_image(update.effective_chat.id, image_file, context, reply_to_message_id=update.message.message_id,delete_after=True)
 
 
 # Obtiene un video de la cámara y lo envía

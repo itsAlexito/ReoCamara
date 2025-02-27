@@ -1,7 +1,8 @@
 import time
 import requests
 import asyncio
-from config import CAMERA_IP, USER, PASSWORD, RTSP_URL
+from config import CAMERA_IP, USER, PASSWORD, RTSP_URL, TARGET_CHAT_ID
+from handlers import send_image
 
 # Variables globales para el token
 _cached_token = None
@@ -77,3 +78,55 @@ async def execute_route(route, output_file):
         await asyncio.sleep(duration_per_movement)
 
     await record_task  # Espera a que la grabación finalice
+
+def set_Alarm_schedule (start_hour, end_hour):
+    token = get_token()
+    if not token:
+        return False
+    
+    url = f"http://{CAMERA_IP}/api.cgi?cmd=SetMdAlarm&token={token}"
+    payload = [{
+        "cmd": "SetMdAlarm",
+        "param": {
+            "MdAlarm": {
+                "channel": 0,
+                "type": "md",
+                "enable": 1,
+                "sens": [
+                    {
+                        "beginHour": 9,
+                        "beginMin": 0,
+                        "endHour": 10,
+                        "endMin": 0,
+                        "sensitivity": 9
+                    }
+                ]   
+            }
+        }
+    }]
+    response = requests.post(url, json=payload, verify=False)
+    return response.status_code == 200
+
+#Monitor de movimiento en la cámara
+async def monitor_motion(context):
+    """Monitorea la detección de movimiento y envía alertas al grupo de Telegram con una imagen"""
+    while True:
+        token = get_token()
+        if not token:
+            await asyncio.sleep(10)
+            continue
+        
+        url = f"http://{CAMERA_IP}/api.cgi?cmd=GetMdState&token={token}"
+        try:
+            response = requests.get(url, verify=False)
+            if response.status_code == 200 and response.json()[0]["value"]["state"] == 1:
+                message = "🚨 ¡Movimiento detectado en la cámara! 🚨"
+                await context.bot.send_message(chat_id=TARGET_CHAT_ID, text=message)
+                
+                # Capturar imagen y enviarla SIN borrarla (delete_after=False)
+                await send_image(TARGET_CHAT_ID, "motion_detected.jpg", context, delete_after=False)
+                
+        except requests.RequestException:
+            pass
+
+        await asyncio.sleep(5)  # Verifica cada 5 segundos
