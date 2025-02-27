@@ -2,7 +2,7 @@ import time
 import requests
 import asyncio
 from config import CAMERA_IP, USER, PASSWORD, RTSP_URL, TARGET_CHAT_ID
-from handlers import send_image
+from delete import send_image
 
 # Variables globales para el token
 _cached_token = None
@@ -11,25 +11,37 @@ _token_expiry = 0
 
 # Obtiene y cachea el token de la cámara
 def get_token():
+    """Obtiene y cachea el token de la cámara"""
     global _cached_token, _token_expiry
     if _cached_token and time.time() < _token_expiry:
+        print(f"🔹 Usando token cacheado: {_cached_token}")  # 🔹 DEBUG
         return _cached_token
 
+    print("🟡 Solicitando nuevo token...")  # 🔹 DEBUG
     url = f"http://{CAMERA_IP}/api.cgi?cmd=Login"
     payload = [{
-        "cmd": "Login", 
+        "cmd": "Login",
         "param": {"User": {"userName": USER, "password": PASSWORD}}
     }]
+
     try:
         response = requests.post(url, json=payload, verify=False)
         if response.status_code == 200:
-            _cached_token = response.json()[0]["value"]["Token"]["name"]
-            _token_expiry = time.time() + 60 * 5  # Token válido por 5 minutos
-            return _cached_token
-    except requests.RequestException:
-        pass
+            data = response.json()[0]
+            if "value" in data and "Token" in data["value"]:
+                _cached_token = data["value"]["Token"]["name"]
+                _token_expiry = time.time() + data["value"]["Token"]["leaseTime"] - 10  # Restamos 10s para prevenir expiración
+                print(f"✅ Nuevo token obtenido: {_cached_token}")  # 🔹 DEBUG
+                return _cached_token
+            else:
+                print("🔴 Error: No se recibió un token válido")  # 🔹 DEBUG
+        else:
+            print(f"🔴 Error en la autenticación: {response.status_code}")  # 🔹 DEBUG
+    except requests.RequestException as e:
+        print(f"🔴 Excepción al obtener el token: {e}")  # 🔹 DEBUG
 
-    return None
+    return None  # Devuelve None si hay un fallo
+
 
 # Mueve la cámara a un preset específico
 # El preset es configurado desde la aplicación de la cámara	o desde el propio navegador
@@ -96,7 +108,7 @@ def set_Alarm_schedule (start_hour, end_hour):
                     {
                         "beginHour": 9,
                         "beginMin": 0,
-                        "endHour": 10,
+                        "endHour": 11,
                         "endMin": 0,
                         "sensitivity": 9
                     }
@@ -113,20 +125,33 @@ async def monitor_motion(context):
     while True:
         token = get_token()
         if not token:
+            print("🔴 No se pudo obtener un token válido.")  # 🔹 DEBUG
             await asyncio.sleep(10)
             continue
         
         url = f"http://{CAMERA_IP}/api.cgi?cmd=GetMdState&token={token}"
         try:
             response = requests.get(url, verify=False)
-            if response.status_code == 200 and response.json()[0]["value"]["state"] == 1:
+            data = response.json()[0]
+
+            print(f"🟢 Respuesta de la cámara: {data}")  # 🔹 DEBUG
+
+            # 📌 Si la API dice "please login first", forzamos la renovación del token
+            if "error" in data and "rspCode" in data["error"] and data["error"]["rspCode"] == -6:
+                print("🔴 Token inválido. Renovando...")  # 🔹 DEBUG
+                global _cached_token
+                _cached_token = None  # Borra el token cacheado para forzar login
+                continue  # Vuelve a intentar en la próxima iteración
+
+            if response.status_code == 200 and "value" in data and data["value"]["state"] == 1:
+                print("🚨 ¡Movimiento detectado! Enviando alerta...")  # 🔹 DEBUG
                 message = "🚨 ¡Movimiento detectado en la cámara! 🚨"
                 await context.bot.send_message(chat_id=TARGET_CHAT_ID, text=message)
                 
-                # Capturar imagen y enviarla SIN borrarla (delete_after=False)
+                # Capturar imagen y enviarla SIN borrarla
                 await send_image(TARGET_CHAT_ID, "motion_detected.jpg", context, delete_after=False)
                 
-        except requests.RequestException:
-            pass
+        except requests.RequestException as e:
+            print(f"🔴 Error en la solicitud a la cámara: {e}")  # 🔹 DEBUG
 
         await asyncio.sleep(5)  # Verifica cada 5 segundos
