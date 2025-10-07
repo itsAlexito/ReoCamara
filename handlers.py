@@ -61,7 +61,7 @@ async def get_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await record_video(output_file, duration)
         if not os.path.exists(output_file) or os.path.getsize(output_file) == 0:
-            await update.message.reply_text("No se pudo grabar el video.")
+            await update.message.reply_text("No se pudo conseguir el video.")
             return
         await send_video(update.effective_chat.id, output_file, context, reply_to_message_id=update.message.message_id)
     except Exception:
