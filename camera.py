@@ -7,7 +7,7 @@ from config import CAMERA_IP, USER, PASSWORD, RTSP_URL
 _cached_token = None
 _token_expiry = 0
 
-
+#esto es un cambio
 # Obtiene y cachea el token de la cámara
 def get_token():
     global _cached_token, _token_expiry
