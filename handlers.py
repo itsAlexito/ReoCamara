@@ -37,7 +37,7 @@ async def get_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Error al obtener el token de la cámara.")
         return
 
-    url = f"https://{CAMERA_IP}/cgi-bin/api.cgi?cmd=Snap&channel=0&rs=flsYJfZgM6RTB_os&token={token}"
+    url = f"https://{CAMERA_IP}/cgi-bin/api.cgi?cmd=Snap&channel=1&rs=flsYJfZgM6RTB_os&token={token}"
     image_file = "getImage.jpg"
 
     try:
