@@ -7,7 +7,7 @@ from config import CAMERA_IP, USER, PASSWORD, RTSP_URL
 _cached_token = None
 _token_expiry = 0
 
-#esto es un cambio
+
 # Obtiene y cachea el token de la cámara
 def get_token():
     global _cached_token, _token_expiry
@@ -22,6 +22,7 @@ def get_token():
     try:
         response = requests.post(url, json=payload, verify=False)
         if response.status_code == 200:
+            print(response.json()[0])
             _cached_token = response.json()[0]["value"]["Token"]["name"]
             _token_expiry = time.time() + 60 * 5  # Token válido por 5 minutos
             return _cached_token
