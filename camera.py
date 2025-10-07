@@ -12,22 +12,36 @@ _token_expiry = 0
 def get_token():
     global _cached_token, _token_expiry
     if _cached_token and time.time() < _token_expiry:
+        print(f"🔹 Usando token cacheado: {_cached_token}")
         return _cached_token
 
     url = f"http://{CAMERA_IP}/api.cgi?cmd=Login"
     payload = [{
-        "cmd": "Login", 
+        "cmd": "Login",
         "param": {"User": {"userName": USER, "password": PASSWORD}}
     }]
+
     try:
+        print(f"🟡 Solicitando token a {url} con payload {payload}")
         response = requests.post(url, json=payload, verify=False)
+        print(f"🔹 Código de respuesta: {response.status_code}")
+
         if response.status_code == 200:
-            print(response.json()[0])
-            _cached_token = response.json()[0]["value"]["Token"]["name"]
-            _token_expiry = time.time() + 60 * 5  # Token válido por 5 minutos
-            return _cached_token
-    except requests.RequestException:
-        pass
+            data = response.json()
+            print(f"🔹 Respuesta JSON: {data}")
+
+            if data and isinstance(data, list) and "value" in data[0] and "Token" in data[0]["value"]:
+                _cached_token = data[0]["value"]["Token"]["name"]
+                _token_expiry = time.time() + 60 * 5  # Token válido por 5 minutos
+                print(f"✅ Token obtenido: {_cached_token}")
+                return _cached_token
+            else:
+                print("🔴 Error: Respuesta no contiene token válido")
+        else:
+            print(f"🔴 Error: Código de estado inesperado {response.status_code}")
+
+    except requests.RequestException as e:
+        print(f"🔴 Excepción en la solicitud: {e}")
 
     return None
 
