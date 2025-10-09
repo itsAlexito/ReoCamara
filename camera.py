@@ -54,7 +54,7 @@ def move_camera(token, preset_id, speed=1):
     url = f"http://{CAMERA_IP}/api.cgi?cmd=PtzCtrl&token={token}"
     payload = [{
         "cmd": "PtzCtrl", 
-        "param": {"channel": 0, "op": "ToPos", "id": preset_id, "speed": speed}
+        "param": {"channel": 1, "op": "ToPos", "id": preset_id, "speed": speed}
     }]
     try:
         requests.post(url, json=payload, verify=False)
