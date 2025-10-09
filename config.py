@@ -37,4 +37,4 @@ COMMANDS_DESCRIPTIONS = {
 }
 
 # Tiempo de vida de los mensajes (segundos)
-MESSAGE_LIFETIME = 30
+MESSAGE_LIFETIME = 40
