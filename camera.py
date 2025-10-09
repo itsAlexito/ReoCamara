@@ -50,6 +50,7 @@ def get_token():
 # speed es la velocidad a la que se mueve la cámara
 
 def move_camera(token, preset_id, speed=1):
+    print(f"🔹 Moviendo cámara al preset {preset_id} con velocidad {speed}")
     url = f"http://{CAMERA_IP}/api.cgi?cmd=PtzCtrl&token={token}"
     payload = [{
         "cmd": "PtzCtrl", 
