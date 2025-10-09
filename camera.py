@@ -81,8 +81,8 @@ async def execute_route(route, output_file):
     if not token:
         return
 
-    duration_per_movement = 4
-    total_duration = 20
+    duration_per_movement = 5
+    total_duration = 15
 
     # Iniciar grabación en paralelo
     # Se graba en paralelo para aumentar la eficiencia
