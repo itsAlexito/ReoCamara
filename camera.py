@@ -12,8 +12,8 @@ _token_expiry = 0
 def get_token():
     global _cached_token, _token_expiry
     if _cached_token and time.time() < _token_expiry:
-        print(f"🔹 Usando token cacheado: {_cached_token}")
         return _cached_token
+    
 
     url = f"http://{CAMERA_IP}/api.cgi?cmd=Login"
     payload = [{
@@ -22,18 +22,14 @@ def get_token():
     }]
 
     try:
-        print(f"🟡 Solicitando token a {url} con payload {payload}")
         response = requests.post(url, json=payload, verify=False)
-        print(f"🔹 Código de respuesta: {response.status_code}")
 
         if response.status_code == 200:
             data = response.json()
-            print(f"🔹 Respuesta JSON: {data}")
 
             if data and isinstance(data, list) and "value" in data[0] and "Token" in data[0]["value"]:
                 _cached_token = data[0]["value"]["Token"]["name"]
                 _token_expiry = time.time() + 60 * 5  # Token válido por 5 minutos
-                print(f"✅ Token obtenido: {_cached_token}")
                 return _cached_token
             else:
                 print("🔴 Error: Respuesta no contiene token válido")
@@ -50,7 +46,8 @@ def get_token():
 # speed es la velocidad a la que se mueve la cámara
 
 def move_camera(token, preset_id, speed=1):
-    print(f"🔹 Moviendo cámara al preset {preset_id} con velocidad {speed}")
+    # Api de la camara para mover a preset
+    # Siempre usar channel 0
     url = f"http://{CAMERA_IP}/api.cgi?cmd=PtzCtrl&token={token}"
     payload = [{
         "cmd": "PtzCtrl", 
