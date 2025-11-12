@@ -1,0 +1,22 @@
+[
+  {
+    "timestamp": "2025-11-12T10:55:55.851261",
+    "user": "Marcos Pérez",
+    "command": "/getsalseo"
+  },
+  {
+    "timestamp": "2025-11-12T10:56:11.729581",
+    "user": "Marcos Pérez",
+    "command": "/stats"
+  },
+  {
+    "timestamp": "2025-11-12T11:03:03.731275",
+    "user": "Marcos Pérez",
+    "command": "/getsalseo"
+  },
+  {
+    "timestamp": "2025-11-12T11:24:05.147065",
+    "user": "∆lexito",
+    "command": "/stats"
+  }
+]
