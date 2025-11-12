@@ -44,6 +44,10 @@ def main():
         first_run_stats = today_target
 
     job_queue = application.job_queue
+
+    # run once immediately (when=0 runs the job asap) so stats are generated on first load
+    job_queue.run_once(_stats_wrapper, when=0)
+    # schedule the daily repeating job (first run at today's target time or tomorrow)
     job_queue.run_repeating(_stats_wrapper, interval=datetime.timedelta(days=1), first=first_run_stats)
 
 
