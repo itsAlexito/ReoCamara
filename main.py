@@ -32,11 +32,11 @@ def main():
     now = datetime.datetime.now().astimezone() if local_tz else datetime.datetime.now()
     try:
         if local_tz:
-            today_target = datetime.datetime(now.year, now.month, now.day, 23, 59, tzinfo=local_tz)
+            today_target = datetime.datetime(now.year, now.month, now.day, 22, 59, tzinfo=local_tz)
         else:
-            today_target = datetime.datetime(now.year, now.month, now.day, 23, 59)
+            today_target = datetime.datetime(now.year, now.month, now.day, 22, 59)
     except Exception:
-        today_target = datetime.datetime(now.year, now.month, now.day, 23, 59)
+        today_target = datetime.datetime(now.year, now.month, now.day, 22, 59)
 
     if today_target <= now:
         first_run_stats = today_target + datetime.timedelta(days=1)
